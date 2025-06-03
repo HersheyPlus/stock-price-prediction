@@ -1,11 +1,13 @@
+from typing import Optional, Dict, Any
 import yfinance as yf
+import pandas as pd
 
 class StockDataLoader:
-    def __init__(self):
-        self.data = None
-        self.symbol = None
+    def __init__(self) -> None:
+        self.data: Optional[pd.DataFrame] = None
+        self.symbol: Optional[str] = None
     
-    def load_stock_data(self, symbol, start_date, end_date):
+    def load_stock_data(self, symbol: str, start_date: str, end_date: str) -> Optional[pd.DataFrame]:
         """Load stock data from Yahoo Finance"""
         try:
             self.symbol = symbol
@@ -22,24 +24,24 @@ class StockDataLoader:
             print(f"Error loading data: {e}")
             return None
     
-    def get_basic_info(self):
+    def get_basic_info(self) -> Optional[Dict[str, Any]]:
         """Get basic stock information"""
         if self.data is None:
             return None
         
-        info = {
+        info: Dict[str, Any] = {
             'symbol': self.symbol,
             'start_date': self.data.index[0],
             'end_date': self.data.index[-1],
             'total_records': len(self.data),
-            'avg_close': self.data['Close'].mean(),
-            'min_close': self.data['Close'].min(),
-            'max_close': self.data['Close'].max(),
-            'volatility': self.data['Close'].std()
+            'avg_close': float(self.data['Close'].mean()),
+            'min_close': float(self.data['Close'].min()),
+            'max_close': float(self.data['Close'].max()),
+            'volatility': float(self.data['Close'].std())
         }
         return info
     
-    def add_technical_indicators(self):
+    def add_technical_indicators(self) -> Optional[pd.DataFrame]:
         """Add basic technical indicators"""
         if self.data is None:
             return None
@@ -63,7 +65,7 @@ class StockDataLoader:
         
         return self.data
 
-def load_stock_data(symbol, start_date, end_date):
+def load_stock_data(symbol: str, start_date: str, end_date: str) -> Optional[pd.DataFrame]:
     """Convenience function"""
     loader = StockDataLoader()
     return loader.load_stock_data(symbol, start_date, end_date)
